@@ -26,8 +26,8 @@ public class Juego {
 
     public void iniciarJuego() throws IOException {
         setJugadores(playerMode());
-        elegirJugador(getJugadores());
-        
+        elegirJugador();
+        asignarTurnos();
 
     }
 
@@ -38,22 +38,9 @@ public class Juego {
 
     }
 
-    public void elegirJugador(int i) throws IOException {
+    public void elegirJugador() throws IOException {
         setSeleccion(seleccion());
-        
-        if (getSeleccion() == 0) {
-            player1 = crearJugador();
-            if (getJugadores() == 2) {
-                setSeleccion(seleccion());
-                if (getSeleccion() == 0) {
-                    player2 = crearJugador();
-                }
-                if (getSeleccion() == 1) {
-                    player2 = leerJugador();
-                }
-            }
-        }
-        
+
         if (getSeleccion() == 1) {
             player1 = leerJugador();
             if (getJugadores() == 2) {
@@ -65,7 +52,20 @@ public class Juego {
                     player2 = leerJugador();
                 }
             }
-        }       
+        } else {
+            if (getSeleccion() == 0) {
+                player1 = crearJugador();
+                if (getJugadores() == 2) {
+                    setSeleccion(seleccion());
+                    if (getSeleccion() == 0) {
+                        player2 = crearJugador();
+                    }
+                    if (getSeleccion() == 1) {
+                        player2 = leerJugador();
+                    }
+                }
+            }
+        }
     }
 
     public Jugador crearJugador() {
@@ -82,6 +82,7 @@ public class Juego {
         while (canonjugador.length() == 0) {
             canonjugador = JOptionPane.showInputDialog("Introduce el nombre del cañón ");
         }
+        System.out.println("Se creó al jugador " + nombrejugador + " (" + apodojugador + ") y su cañón " + canonjugador);
         return new Jugador(nombrejugador, apodojugador, new Canon(getLargo(), getCalibre(), canonjugador));
     }
 
@@ -98,36 +99,33 @@ public class Juego {
         int i;
         String line;
         while ((line = buffer.readLine()) != null) {
-            
+
             lnr.setLineNumber(linenumber);
 
             if (lnr.getLineNumber() == 0) {
                 nombrejugador = line;
-                System.out.println(nombrejugador);
             }
             if (lnr.getLineNumber() == 1) {
                 apodojugador = line;
-                System.out.println(apodojugador);
             }
             if (lnr.getLineNumber() == 2) {
                 canonjugador = line;
-                System.out.println(canonjugador);
             }
 
             // Process line of input Here
             linenumber++;
 
         }
-
+        System.out.println("Se creó al jugador " + nombrejugador + " (" + apodojugador + ") y su cañón " + canonjugador);
         return new Jugador(nombrejugador, apodojugador, new Canon(getLargo(), getCalibre(), canonjugador));
 
     }
-    
+
     public int seleccion() {
         return JOptionPane.showOptionDialog(null, "Elija a su jugador", "Elija a su jugador", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE,
                 null, new Object[]{"Crear Jugador", "Utilizar jugador creado", "Salir"}, "opcion 1");
     }
-    
+
     public void asignarTurnos() {
 
         player1.setTurno(Math.random() > .5 ? 1 : 2);
@@ -141,14 +139,12 @@ public class Juego {
                 if (player1.getTurno() == 2) {
                     player2.setTurno(1);
                     System.out.println(player2.getNickname() + " va primero");
-                    System.out.println(player1.getNickname() + " va segundo.");                    
+                    System.out.println(player1.getNickname() + " va segundo.");
                 }
             }
         }
 
     }
-    
-    
 
     public Juego(int distancia, double gravity, int rango, int jugadores) {
         this.distancia = distancia;
@@ -223,6 +219,5 @@ public class Juego {
     public void setSeleccion(int seleccion) {
         this.seleccion = seleccion;
     }
-    
-    
+
 }
